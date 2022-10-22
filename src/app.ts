@@ -1,15 +1,15 @@
-import { Shedule } from './shedule';
+import { Schedule } from './schedule';
 import { Rasp_Scraper } from './raps-scraper';
 import { GroupScraper } from './group-scraper';
 class App {
-  private readonly shedule_scraper: Rasp_Scraper = new Rasp_Scraper(
+  private readonly schedule_scraper: Rasp_Scraper = new Rasp_Scraper(
     'https://rasp.sstu.ru/rasp/group/22'
   );
   private readonly group_scraper: GroupScraper = new GroupScraper();
-  private readonly shedule = new Shedule();
-  async getShedule() {
-    const shedule = await this.shedule_scraper.getRasp();
-    console.log(shedule);
+  private readonly shedule = new Schedule();
+  async getSchedule() {
+    const schedule = await this.schedule_scraper.getRasp();
+    console.log(schedule);
   }
 
   async generateGroupList() {

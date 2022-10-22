@@ -3,7 +3,7 @@ import { Rasp_Scraper } from './raps-scraper';
 import { AppError } from './AppError';
 import { existsSync, readFile, writeFileSync, mkdir } from 'fs';
 
-export class Shedule {
+export class Schedule {
   private path = './groups';
   async generateRaspFiles() {
     if (existsSync(this.path)) {
