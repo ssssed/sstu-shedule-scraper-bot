@@ -17,3 +17,7 @@ export interface Scraper {
   link: string;
   getRasp(): Promise<Week[]>;
 }
+
+export interface GroupList {
+  [key: string]: string;
+}
