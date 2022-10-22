@@ -14,4 +14,8 @@ export class AppError extends Error {
   static createFolderError(error: string) {
     throw error;
   }
+
+  static folderNotFound(error: string) {
+    throw error;
+  }
 }

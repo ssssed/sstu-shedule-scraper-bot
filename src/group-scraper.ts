@@ -7,7 +7,7 @@ import { writeFile, existsSync, mkdir } from 'fs';
 export class GroupScraper {
   private link: string = 'https://rasp.sstu.ru/' as const;
   private group_list: GroupList = {};
-  private file_name: string = './shedule/shedule.json';
+  private file_name: string = './groups/groups.json';
 
   private initDomTree(html: string) {
     const dom = new JSDOM(html);
@@ -37,10 +37,10 @@ export class GroupScraper {
   }
 
   private createGroupList() {
-    if (existsSync('./shedule')) {
+    if (existsSync('./groups')) {
       this.writeSheduleJSONFile();
     } else {
-      mkdir('./shedule', err => {
+      mkdir('./groups', err => {
         if (err) throw AppError.createFolderError(String(err));
       });
       this.writeSheduleJSONFile();
