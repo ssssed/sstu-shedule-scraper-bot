@@ -1,15 +1,20 @@
+import { Bot } from './bot';
 import { Schedule } from './schedule';
 import { Rasp_Scraper } from './raps-scraper';
 import { GroupScraper } from './group-scraper';
+import dotenv from 'dotenv';
+dotenv.config();
+
 class App {
   private readonly schedule_scraper: Rasp_Scraper = new Rasp_Scraper(
     'https://rasp.sstu.ru/rasp/group/22'
   );
   private readonly group_scraper: GroupScraper = new GroupScraper();
-  private readonly shedule = new Schedule();
+  private readonly schedule = new Schedule();
+  private readonly token = process.env.TOKEN || '';
+  private readonly bot: Bot = new Bot(this.token);
   async getSchedule() {
     const schedule = await this.schedule_scraper.getRasp();
-    console.log(schedule);
   }
 
   async generateGroupList() {
@@ -17,12 +22,13 @@ class App {
   }
 
   getAllRasp() {
-    this.shedule.generateRaspFiles();
+    this.schedule.generateRaspFiles();
   }
 
   async start() {
-    await this.generateGroupList();
-    this.getAllRasp();
+    this.bot.start();
+    // await this.generateGroupList();
+    // this.getAllRasp();
   }
 }
 
