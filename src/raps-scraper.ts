@@ -46,19 +46,20 @@ export class Rasp_Scraper implements Scraper {
         lessons.forEach(lesson => {
           if (this.isEmptyLesson(lesson)) {
             day_rasp.push({
-              room: '',
+              room: '-',
               name: '-',
-              type: '',
-              teacher: '',
+              type: '-',
+              teacher: '-',
+              time: this.timeLesson[lesson_time_id],
             });
             lesson_time_id++;
           }
           const lesson_room =
-            lesson.querySelector('.lesson-room')?.textContent || '';
+            lesson.querySelector('.lesson-room')?.textContent || '-';
           const lesson_name =
-            lesson.querySelector('.lesson-name')?.textContent || '';
+            lesson.querySelector('.lesson-name')?.textContent || '-';
           const lesson_type =
-            lesson.querySelector('.lesson-type')?.textContent || '';
+            lesson.querySelector('.lesson-type')?.textContent || '-';
           const lesson_teacher =
             lesson.querySelector('.lesson-teacher')?.textContent || 'Не Указан';
           day_rasp.push({

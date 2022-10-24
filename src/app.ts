@@ -24,11 +24,14 @@ class App {
     await this.group_scraper.main();
   }
 
-  getAllRasp() {
-    this.schedule.generateRaspFiles();
+  async updateSchedule() {
+    await this.schedule.generateRaspFiles();
+    setInterval(async () => this.schedule.generateRaspFiles(), 36000000);
   }
 
   async start() {
+    await this.generateGroupList();
+    this.updateSchedule();
     try {
       await sequelize.authenticate();
       await sequelize.sync();
@@ -36,8 +39,6 @@ class App {
     } catch (e) {
       throw AppError.bdConnectionError(String(e));
     }
-    // await this.generateGroupList();
-    // this.getAllRasp();
   }
 }
 

@@ -30,7 +30,7 @@ export class GroupScraper {
     }
   }
 
-  private writeSheduleJSONFile() {
+  private writeScheduleJSONFile() {
     writeFile(this.file_name, JSON.stringify(this.group_list), err => {
       if (err) throw AppError.writeFileError(String(err));
     });
@@ -38,17 +38,18 @@ export class GroupScraper {
 
   private createGroupList() {
     if (existsSync('./groups')) {
-      this.writeSheduleJSONFile();
+      this.writeScheduleJSONFile();
     } else {
       mkdir('./groups', err => {
         if (err) throw AppError.createFolderError(String(err));
       });
-      this.writeSheduleJSONFile();
+      this.writeScheduleJSONFile();
     }
   }
 
   async main() {
     await this.scrapGroup();
     this.createGroupList();
+    console.log('[ GROUP ] received');
   }
 }

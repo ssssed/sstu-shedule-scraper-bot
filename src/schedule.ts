@@ -11,6 +11,7 @@ export class Schedule {
         if (err) throw AppError.folderNotFound(String(err));
         const groups: GroupList = JSON.parse(String(data));
         await this.createFiles(groups);
+        console.log('[ SCHEDULE ] received');
       });
     }
   }
