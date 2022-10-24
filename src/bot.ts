@@ -2,7 +2,7 @@ import { Schedule } from './schedule';
 import { User } from './model/model';
 import { GroupList, Week } from './types';
 import { AppError } from './AppError';
-import TelegramBot from 'node-telegram-bot-api';
+import TelegramBot, { ChatId } from 'node-telegram-bot-api';
 import { readFileSync } from 'fs';
 import path from 'path';
 export class Bot {
@@ -14,8 +14,8 @@ export class Bot {
       keyboard: [
         [
           { text: 'Получить расписание на сегодня' },
-          { text: 'На неделю' },
-          { text: 'На две недели' },
+          { text: 'На завтра' },
+          { text: 'Сменить группу' },
         ],
       ],
     },
@@ -35,7 +35,6 @@ export class Bot {
       this.formatDate(String(date.getDate() + next)) +
       '.' +
       this.formatDate(String(date.getMonth() + 1));
-    console.log(`[ DATE ] ${day}`);
     return day;
   }
 
@@ -65,6 +64,14 @@ export class Bot {
     return msg;
   }
 
+  private sendFormatMessage(chatId: ChatId, day: Week) {
+    return this.bot.sendMessage(
+      chatId,
+      this.makeLessonMessage(day),
+      this.keyboard
+    );
+  }
+
   start() {
     console.log('[ BOT ] started');
     const date = this.today(new Date());
@@ -86,7 +93,11 @@ export class Bot {
           'Данный бот создан для удобства получения расписания для всех учащихся СГТУ им. Гагарина'
         );
         if (this.auth) {
-          return this.bot.sendMessage(chatId, '', this.keyboard);
+          return this.bot.sendMessage(
+            chatId,
+            'Чтобы получить расписание нажмите на нужную кнопку из меню',
+            this.keyboard
+          );
         }
         return await this.bot.sendMessage(
           chatId,
@@ -94,7 +105,7 @@ export class Bot {
         );
       }
 
-      if (text === '/setting') {
+      if (text === '/setting' || text === 'Сменить группу') {
         return await this.bot.sendMessage(
           chatId,
           'Напиши группу в который вы учитесь'
@@ -146,14 +157,9 @@ export class Bot {
           )
         );
         const day = rasp.find(d => d.day == date);
-        if (day) {
-          return this.bot.sendMessage(
-            chatId,
-            this.makeLessonMessage(day),
-            this.keyboard
-          );
-        } else {
-          await this.bot.sendMessage(
+        if (day) this.sendFormatMessage(chatId, day);
+        else {
+          this.bot.sendMessage(
             chatId,
             'Простите, бот временно не доступен, попробуйте через несколько минут',
             this.keyboard
@@ -163,6 +169,28 @@ export class Bot {
         }
       }
 
+      if (text === 'На завтра') {
+        const user = await User.findOne({ where: { chatId } });
+        this.user_group = user?.getDataValue('group');
+        const rasp: Week[] = JSON.parse(
+          String(
+            readFileSync(
+              path.resolve(
+                __dirname,
+                '..',
+                'groups',
+                'rasp',
+                `${this.user_group}.json`
+              )
+            )
+          )
+        );
+        const next_day = rasp.find(
+          day => day.day === this.today(new Date(), 1)
+        );
+        if (next_day) this.sendFormatMessage(chatId, next_day);
+        return;
+      }
       if (text) {
         return await this.bot.sendMessage(chatId, 'Некорректные данные');
       }
