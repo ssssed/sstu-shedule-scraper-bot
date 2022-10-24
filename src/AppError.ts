@@ -18,4 +18,8 @@ export class AppError extends Error {
   static folderNotFound(error: string) {
     throw error;
   }
+
+  static bdConnectionError(error: string) {
+    throw 'Проблема с подключением к бд\n' + error;
+  }
 }
